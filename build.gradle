@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'groovy'
     id 'application'
+    id 'jacoco'
 }
 
 group 'com.nqueens'
@@ -22,5 +23,13 @@ mainClassName = "com.nqueens.solver.Application"
 run {
     if(project.hasProperty("boardDimension")) {
         args Eval.me(boardDimension)
+    }
+}
+
+test.finalizedBy jacocoTestReport
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
     }
 }
