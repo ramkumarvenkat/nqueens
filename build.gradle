@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'groovy'
+    id 'application'
 }
 
 group 'com.nqueens'
@@ -14,4 +15,12 @@ repositories {
 
 dependencies {
     testImplementation("org.spockframework:spock-core:${spockVersion}")
+}
+
+mainClassName = "com.nqueens.solver.Application"
+
+run {
+    if(project.hasProperty("boardDimension")) {
+        args Eval.me(boardDimension)
+    }
 }
