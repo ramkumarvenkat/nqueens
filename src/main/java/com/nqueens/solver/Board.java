@@ -27,10 +27,9 @@ public class Board {
 		int n = board.length;
 		int[] queensAtRows = new int[n];
 		Arrays.fill(queensAtRows, -1);
-		int[] rowMarkers = new int[n];
 		int[] differenceMarkers = new int[2 * n - 1]; //leftBottomToRightTopDiagonal, we do row - column and add n - 1, to shift everything to start from 0
 		int[] sumMarkers = new int[2 * n - 1]; //leftTopToRightBottomDiagonal
-		return solveRecurse(0, constraints, queensAtRows, rowMarkers, differenceMarkers, sumMarkers);
+		return solveRecurse(0, constraints, queensAtRows, differenceMarkers, sumMarkers);
 	}
 
 	public void print() {
@@ -43,25 +42,25 @@ public class Board {
 		}
 	}
 
-	private boolean solveRecurse(int column, List<Constraint> constraints, int[] queensAtRows, int[] rowMarkers, int[] differenceMarkers, int[] sumMarkers) {
+	private boolean solveRecurse(int column, List<Constraint> constraints, int[] queensAtRows, int[] differenceMarkers, int[] sumMarkers) {
 		if (column >= board.length) return true;
 
 		for (int i = 0; i < board.length; i++) {
-			if (canPlaceQueenAt(i, column, constraints, queensAtRows, rowMarkers, differenceMarkers, sumMarkers)) {
-				placeQueenAt(i, column, queensAtRows, rowMarkers, differenceMarkers, sumMarkers);
-				if (solveRecurse(column + 1, constraints, queensAtRows, rowMarkers, differenceMarkers, sumMarkers)) {
+			if (canPlaceQueenAt(i, column, constraints, queensAtRows, differenceMarkers, sumMarkers)) {
+				placeQueenAt(i, column, queensAtRows, differenceMarkers, sumMarkers);
+				if (solveRecurse(column + 1, constraints, queensAtRows, differenceMarkers, sumMarkers)) {
 					return true;
 				}
-				removeQueenAt(i, column, queensAtRows, rowMarkers, differenceMarkers, sumMarkers);
+				removeQueenAt(i, column, queensAtRows, differenceMarkers, sumMarkers);
 			}
 		}
 
 		return false;
 	}
 
-	private boolean canPlaceQueenAt(int row, int column, List<Constraint> constraints, int[] queensAtRows, int[] rowMarkers, int[] differenceMarkers, int[] sumMarkers) {
+	private boolean canPlaceQueenAt(int row, int column, List<Constraint> constraints, int[] queensAtRows, int[] differenceMarkers, int[] sumMarkers) {
 
-		if (rowMarkers[row] == 1 || differenceMarkers[getDifferenceMarkerIndex(row, column)] == 1 || sumMarkers[row + column] == 1) {
+		if (queensAtRows[row] != -1 || differenceMarkers[getDifferenceMarkerIndex(row, column)] == 1 || sumMarkers[row + column] == 1) {
 			return false;
 		}
 
@@ -86,20 +85,18 @@ public class Board {
 		return true;
 	}
 
-	private void placeQueenAt(int row, int column, int[] queensAtRows, int[] rowMarkers, int[] differenceMarkers, int[] sumMarkers) {
+	private void placeQueenAt(int row, int column, int[] queensAtRows, int[] differenceMarkers, int[] sumMarkers) {
 		assertCoordinates(row, column);
 		board[row][column] = 1;
 		queensAtRows[row] = column;
-		rowMarkers[row] = 1;
 		differenceMarkers[getDifferenceMarkerIndex(row, column)] = 1;
 		sumMarkers[row + column] = 1;
 	}
 
-	private void removeQueenAt(int row, int column, int[] queensAtRows, int[] rowMarkers, int[] differenceMarkers, int[] sumMarkers) {
+	private void removeQueenAt(int row, int column, int[] queensAtRows, int[] differenceMarkers, int[] sumMarkers) {
 		assertCoordinates(row, column);
 		board[row][column] = 0;
 		queensAtRows[row] = -1;
-		rowMarkers[row] = 0;
 		differenceMarkers[getDifferenceMarkerIndex(row, column)] = 0;
 		sumMarkers[row + column] = 0;
 	}
